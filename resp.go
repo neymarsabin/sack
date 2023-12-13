@@ -8,12 +8,22 @@ import (
 )
 
 const (
-	STRING  = "+"
-	ERROR   = "-"
-	INTEGER = ":"
-	BULK    = "$"
-	ARRAY   = "*"
+	STRING  = '+'
+	ERROR   = '-'
+	INTEGER = ':'
+	BULK    = '$'
+	ARRAY   = '*'
 )
+
+// Example of RESP representation
+// the RESP array looks like this:
+// *2\r\n$5\r\nhello\r\n$5\r\nworld\r\n
+// we can split it into lines instead of using ‘\r\n’ to understand
+// *2
+// $5
+// hello
+// $5
+// world
 
 // define struct to use for serialization/deserialization process
 // holds all the commands and arguments we receive from the client
@@ -94,4 +104,61 @@ func (r *Resp) Read() (Value, error) {
 		fmt.Printf("Unknown type: %v", string(_type))
 		return Value{}, nil
 	}
+}
+
+// to read Array
+// Skip the first byte because we have already read it in the Read method
+// Read the integer that represents the number of elements in the array
+// iterate over the array and for each line, call the Read method to parse the type according to the character at the beginning of the line
+// with each iteration, append the parsed value to the array in the Value object and return it
+func (r *Resp) readArray() (Value, error) {
+	v := Value{}
+	v.typ = "array"
+
+	// read length of array
+	len, _, err := r.readInteger()
+	if err != nil {
+		return v, err
+	}
+
+	// foreach line, parse and read the value
+	v.array = make([]Value, 0)
+	for i := 0; i < len; i++ {
+		val, err := r.Read()
+		if err != nil {
+			return v, err
+		}
+		// append parsed value to array
+		v.array = append(v.array, val)
+	}
+
+	return v, nil
+}
+
+// to read Bulk
+// To read the Bulk, we follow these steps:
+// Skip the first byte because we have already read it in the Read method.
+// Read the integer that represents the number of bytes in the bulk string.
+// Read the bulk string, followed by the ‘\r\n’ that indicates the end of the bulk string.
+// Return the Value object.
+func (r *Resp) readBulk() (Value, error) {
+	v := Value{}
+
+	v.typ = "bulk"
+
+	len, _, err := r.readInteger()
+	if err != nil {
+		return v, err
+	}
+
+	bulk := make([]byte, len)
+
+	r.reader.Read(bulk)
+
+	v.bulk = string(bulk)
+
+	// Read the trailing CRLF
+	r.readLine()
+
+	return v, nil
 }

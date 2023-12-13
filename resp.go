@@ -53,6 +53,15 @@ func NewResp(rd io.Reader) *Resp {
 	return &Resp{reader: bufio.NewReader(rd)}
 }
 
+// this is a writer
+type Writer struct {
+	writer io.Writer
+}
+
+func NewWriter(w io.Writer) *Writer {
+	return &Writer{writer: w}
+}
+
 // we need to implement two methods, as they are not available in bufio
 // readLine -> reads the line from the buffer
 // read one byte at a time until we reach \r which indicates the end of the line
@@ -161,4 +170,86 @@ func (r *Resp) readBulk() (Value, error) {
 	r.readLine()
 
 	return v, nil
+}
+
+// write the marshal method which will call the specific method for each type based on the Value type
+func (v Value) Marshal() []byte {
+	switch v.typ {
+	case "array":
+		return v.marshalArray()
+	case "bulk":
+		return v.marshalBulk()
+	case "string":
+		return v.marshalString()
+	case "null":
+		return v.marshalNull()
+	case "error":
+		return v.marshalError()
+	default:
+		return []byte{}
+	}
+}
+
+// marshal simple strings
+// prepare something like "+neymar\r\n"
+func (v Value) marshalString() []byte {
+	var bytes []byte
+	bytes = append(bytes, STRING)
+	bytes = append(bytes, v.str...)
+	bytes = append(bytes, '\r', '\n')
+	return bytes
+}
+
+// marshal Bulk String
+// prepare bulk serialized data
+func (v Value) marshalBulk() []byte {
+	var bytes []byte
+	bytes = append(bytes, BULK)
+	bytes = append(bytes, strconv.Itoa(len(v.bulk))...)
+	bytes = append(bytes, '\r', '\n')
+	bytes = append(bytes, v.bulk...)
+	bytes = append(bytes, '\r', '\n')
+
+	return bytes
+}
+
+// marshal array
+func (v Value) marshalArray() []byte {
+	len := len(v.array)
+	var bytes []byte
+	bytes = append(bytes, ARRAY)
+	bytes = append(bytes, strconv.Itoa(len)...)
+	bytes = append(bytes, '\r', '\n')
+
+	for i := 0; i < len; i++ {
+		bytes = append(bytes, v.array[i].Marshal()...)
+	}
+
+	return bytes
+}
+
+// marshal Error
+func (v Value) marshalError() []byte {
+	var bytes []byte
+	bytes = append(bytes, ERROR)
+	bytes = append(bytes, v.str...)
+	bytes = append(bytes, '\r', '\n')
+
+	return bytes
+}
+
+// marshal Null
+func (v Value) marshalNull() []byte {
+	return []byte("$-1\r\n")
+}
+
+// a method to take Value and writes the bytes it gets from the Marshal method to the Writer
+func (w *Writer) Write(v Value) error {
+	var bytes = v.Marshal()
+	_, err := w.writer.Write(bytes)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

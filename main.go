@@ -34,10 +34,9 @@ func main() {
 			return
 		}
 
-		// print value
-		fmt.Println("The parsed value that is read: ", value)
+		_ = value
 
-		// ignore request and send back a PONG
-		conn.Write([]byte("+OK\r\n"))
+		writer := NewWriter(conn)
+		writer.Write(Value{typ: "string", str: "OK"})
 	}
 }

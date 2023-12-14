@@ -126,5 +126,11 @@ func hgetall(args []Value) Value {
 		return Value{typ: "NULL"}
 	}
 
-	return Value{typ: "bulk", bulk: value}
+	values := []Value{}
+	for k, v := range value {
+		values = append(values, Value{typ: "bulk", bulk: k})
+		values = append(values, Value{typ: "bulk", bulk: v})
+	}
+
+	return Value{typ: "array", array: values}
 }

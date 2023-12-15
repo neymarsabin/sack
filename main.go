@@ -15,6 +15,14 @@ func main() {
 		return
 	}
 
+	// start with persistance file
+	persistance, err := NewPersistance("db.sack")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer persistance.Close()
+
 	// start listening on the specified port
 	conn, err := listener.Accept()
 	if err != nil {
@@ -66,6 +74,10 @@ func main() {
 			fmt.Println("Invalid command: ", command)
 			writer.Write(Value{typ: "string", str: ""})
 			continue
+		}
+
+		if command == "SET" || command == "HSET" {
+			persistance.Write(value)
 		}
 
 		result := handler(args)

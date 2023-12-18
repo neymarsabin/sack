@@ -23,6 +23,21 @@ func main() {
 	}
 	defer persistance.Close()
 
+	// read logs from file and save it in memory
+	// does not have the Read method without using the ~file.Read~ option
+	persistance.Read(func(value Value) {
+		command := strings.ToUpper(value.array[0].bulk)
+		args := value.array[1:]
+
+		handler, ok := Handlers[command]
+		if !ok {
+			fmt.Println("Invalid Command: ", command)
+			return
+		}
+
+		handler(args)
+	})
+
 	// start listening on the specified port
 	conn, err := listener.Accept()
 	if err != nil {

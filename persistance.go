@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"os"
 	"sync"
 	"time"
@@ -57,6 +58,30 @@ func (persistantFile *Persistance) Write(value Value) error {
 	_, err := persistantFile.file.Write(value.Marshal())
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// read commands/logs from the file
+func (persistantFile *Persistance) Read(fn func(value Value)) error {
+	persistantFile.mu.Lock()
+	defer persistantFile.mu.Unlock()
+
+	persistantFile.file.Seek(0, io.SeekStart)
+
+	reader := NewResp(persistantFile.file)
+
+	for {
+		value, err := reader.Read()
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+
+			return err
+		}
+		fn(value)
 	}
 
 	return nil

@@ -9,7 +9,7 @@ import (
 func main() {
 	// create a new server to listen to port 6379
 	fmt.Println("Listening on port :6379")
-	listener, err := net.Listen("tcp", ":6379")
+	listener, err := net.Listen("tcp", "0.0.0.0:6379")
 	if err != nil {
 		fmt.Println("Error while starting listener: ", err)
 		return

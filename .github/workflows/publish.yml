@@ -23,3 +23,4 @@ jobs:
       - name: Push docker image to registry
         run: |
           docker push ${{secrets.DOCKER_USERNAME}}/sack:latest
+          docker push ${{secrets.DOCKER_USERNAME}}/sack:${{ env.RELEASE_VERSION }}

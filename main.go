@@ -16,7 +16,7 @@ func main() {
 	}
 
 	// start with persistance file
-	persistance, err := NewPersistance("db.sack")
+	persistance, err := NewPersistance("./tmp/db.sack")
 	if err != nil {
 		fmt.Println(err)
 		return

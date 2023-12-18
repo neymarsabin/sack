@@ -1,13 +1,16 @@
 name: Publish Docker Image
 on:
   push:
-    branches: [main]
+    tags:
+      - 'v*.*.*'
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: set release version
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
       - name: docker login
         env:
           DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
@@ -16,7 +19,7 @@ jobs:
            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
       - name: Build docker image
         run: |
-          docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/sack:latest
+          docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/sack:latest --tag ${{secrets.DOCKER_USERNAME}}/sack:${{ env.RELEASE_VERSION }}
       - name: Push docker image to registry
         run: |
           docker push ${{secrets.DOCKER_USERNAME}}/sack:latest

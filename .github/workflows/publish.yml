@@ -1,0 +1,22 @@
+name: Publish Docker Image
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - users: actions/checkout@v2
+      - name: docker login
+        env:
+          DOCKER_USER: ${{secrets.DOCKER_USERNAME}}
+          DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
+        run: |
+           docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+      - name: Build docker image
+        run: |
+          docker build . --file Dockerfile --tag ${{secrets.DOCKER_USERNAME}}/sack:latest
+      - name: Push docker image to registry
+        run: |
+          docker push ${{secrets.DOCKER_USERNAME}}/sack:latest

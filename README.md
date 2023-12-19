@@ -1,5 +1,5 @@
 # sack
-An in-memory key/value store that can be used with clients that supports redis. This is not a production ready application. This is me doing some heavy stuffs in Golang :)  
+An in-memory key/value store that can be used with clients that supports redis. This is not a production ready application but more like redis. This is me doing some heavy stuffs in Golang :) 
 
 # Installation Instructions
 New released version is pushed to dockerhub with tags. Just pull that image from dockerhub and run the container.
@@ -11,7 +11,7 @@ docker run sack
 The port exposed is *6379*, so make sure you have the redis server stopped. You can use the redis-cli to connect to `sackDB` server. 
 
 # Supported Commands
-Only basic commands are supported at the moment. 
+Only basic commands supported at the moment. 
  - SET -> set a key and value 
  ```sh 
  SET name neymar

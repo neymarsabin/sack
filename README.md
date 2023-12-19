@@ -1,2 +1,35 @@
 # sack
-In memory key-value store
+An in-memory key/value store that can be used with clients that supports redis.
+
+# Installation Instructions
+New released version is pushed to dockerhub with tags. Just pull that image from dockerhub and run the container.
+
+``` sh
+docker pull neymarsabin/sack:latest
+docker run sack
+```
+The port exposed is *6379*, so make sure you have the redis server stopped. You can use the redis-cli to connect to `sackDB` server. 
+
+# Supported Commands
+Only basic commands are supported at the moment. 
+ - SET -> set a key and value 
+ ```sh 
+ SET name neymar
+ ```
+ - GET -> get a value when key passed as arguments
+ ```sh
+ GET name 
+ ```
+ - HSET -> set a key to object value
+ ```sh
+ HSET users u1 neymar
+ HSET users u1 sabin
+ ```
+*`HSET` does not support nested objects at the moment.*
+ - HGET -> get value from the objects
+ ```sh
+ HGET users u1
+ HGET users u2
+ ```
+ 
+ More commands and optimizations are on the way. 

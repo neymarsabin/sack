@@ -1,5 +1,5 @@
 # sack
-An in-memory key/value store that can be used with clients that supports redis.
+An in-memory key/value store that can be used with clients that supports redis. This is not a production ready application. This is me doing some heavy stuffs in Golang :)  
 
 # Installation Instructions
 New released version is pushed to dockerhub with tags. Just pull that image from dockerhub and run the container.

@@ -5,7 +5,7 @@ WORKDIR /app
 COPY ./*.go ./
 
 # build for linux
-RUN CGO_ENABLED=0 go build -o /app/sack lib/*.go
+RUN CGO_ENABLED=0 go build -o /app/sack lib/
 
 # expose 6379 port
 EXPOSE 6379

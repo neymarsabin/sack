@@ -1,4 +1,4 @@
-package main
+package lib
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func main() {
+func RunServer() {
 	// create a new server to listen to port 6379
 	fmt.Println("Listening on port :6379")
 	listener, err := net.Listen("tcp", "0.0.0.0:6379")

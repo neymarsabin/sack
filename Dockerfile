@@ -7,8 +7,8 @@ COPY ./*.go ./
 # build for linux
 RUN CGO_ENABLED=0 go build -o /app/sack *.go
 
-# expose 6379 port
-EXPOSE 6379
+# # expose 6379 port
+# EXPOSE 6379
 
 # run the binary
 CMD ["/app/sack"]

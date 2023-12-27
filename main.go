@@ -1,3 +1,13 @@
+// the value object looks like this when the command is SET name sabin
+// Value{
+// 	typ: "array",
+// 	array: []Value{
+// 		Value{typ: "bulk", bulk: "SET"},
+// 		Value{typ: "bulk", bulk: "name"},
+// 		Value{typ: "bulk", bulk: "sabin"},
+// 	},
+// }
+
 package main
 
 import (
@@ -53,16 +63,6 @@ func main() {
 	for {
 		resp := NewResp(conn)
 		value, err := resp.Read()
-
-		// the value object looks like this when the command is SET name sabin
-		// Value{
-		// 	typ: "array",
-		// 	array: []Value{
-		// 		Value{typ: "bulk", bulk: "SET"},
-		// 		Value{typ: "bulk", bulk: "name"},
-		// 		Value{typ: "bulk", bulk: "sabin"},
-		// 	},
-		// }
 
 		if err != nil {
 			fmt.Println(err)

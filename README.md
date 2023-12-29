@@ -6,7 +6,7 @@ New released version is pushed to dockerhub with tags. Just pull that image from
 
 ``` sh
 docker pull neymarsabin/sack:latest
-docker run sack
+docker run -p 6379:6379 neymarsabin/sack:latest
 ```
 The port exposed is *6379*, so make sure you have the redis server stopped. You can use the redis-cli to connect to `sackDB` server. 
 

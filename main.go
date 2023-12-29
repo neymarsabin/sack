@@ -11,12 +11,48 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net"
+	"os"
 	"strings"
+
+	"github.com/cristalhq/acmd"
 )
 
 func main() {
+	// start with initializing a few commands
+	config := &Configuration{}
+	cmds := []acmd.Command{
+		{
+			Name:        "ping",
+			Description: "Ping the application",
+			ExecFunc: func(ctx context.Context, args []string) error {
+				fmt.Println("Pong!")
+				return nil
+			},
+		},
+		{
+			Name:        "port",
+			Description: "set port of the application",
+			ExecFunc: func(ctx context.Context, args []string) error {
+				config.port = 6379
+				fmt.Println("The port is set for configuration: ", config.port)
+				return nil
+			},
+		},
+	}
+
+	app := acmd.RunnerOf(cmds, acmd.Config{
+		AppName:        "sack",
+		AppDescription: "a simple ping command library",
+	})
+
+	if err := app.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+
 	// create a new server to listen to port 6379
 	fmt.Println("Listening on port :6379")
 	listener, err := net.Listen("tcp", "0.0.0.0:6379")

@@ -23,7 +23,6 @@ import (
 
 func main() {
 	config := &Configuration{}
-	// eg: sack start --port=8080
 	cmds := []acmd.Command{
 		{
 			Name:        "ping",

@@ -13,6 +13,7 @@ var Handlers = map[string]func([]Value) Value{
 	"HGET":    hget,
 	"HGETALL": hgetall,
 	"DEL":     del,
+	"USER":    user,
 }
 
 var SETs = map[string]string{}
@@ -45,7 +46,6 @@ func set(args []Value) Value {
 	SETs[key] = value
 	SETsMu.Unlock()
 
-	fmt.Println("Printing the value of all SETs: ", SETs)
 	return Value{typ: "string", str: "OK"}
 }
 

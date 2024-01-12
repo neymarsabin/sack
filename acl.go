@@ -34,5 +34,10 @@ func user(args []Value) Value {
 		ACLsMu.Unlock()
 	}
 
+	if subCommand == "update" {
+		ACLsMu.Lock()
+		// TODO: find user and then update acls
+	}
+
 	return Value{typ: "string", str: "OK"}
 }
